@@ -18,11 +18,13 @@
 #
 
 """Slightly magical Win32api Registry -> Dictionary-like-object wrapper"""
-import win32api, win32con, cPickle
+import win32api
+import win32con
+import cPickle
 
 
 class RegistryDict(object):
-    def __init__(self, keyhandle=win32con.HKEY_LOCAL_MACHINE, keypath=[ ], flags=None):
+    def __init__(self, keyhandle=win32con.HKEY_LOCAL_MACHINE, keypath=[], flags=None):
         """If flags=None, then it will create the key.. otherwise pass a win32con.KEY_* sam"""
         self.keyhandle = None
         self.open(keyhandle, keypath, flags)
@@ -30,8 +32,8 @@ class RegistryDict(object):
     @staticmethod
     def massageIncomingRegistryValue((obj, objtype), bReturnType=False):
         r = None
-        if objtype == win32con.REG_BINARY and obj[ :8 ] == 'PyPickle':
-            obj = obj[ 8: ]
+        if objtype == win32con.REG_BINARY and obj[:8] == 'PyPickle':
+            obj = obj[8:]
             r = (cPickle.loads(obj), objtype)
         elif objtype == win32con.REG_NONE:
             r = (None, objtype)
@@ -46,12 +48,12 @@ class RegistryDict(object):
         if bReturnType:
             return r
         else:
-            return r[ 0 ]
+            return r[0]
 
     def __getitem__(self, key):
         bReturnType = False
         if (type(key) is tuple) and (len(key) == 1):
-            key = key[ 0 ]
+            key = key[0]
             bReturnType = True
             # is it data?
         try:
@@ -99,7 +101,7 @@ class RegistryDict(object):
         keylist = list(self.iterkeys())
         # Two-step to avoid changing the set while iterating over it
         for k in keylist:
-            del self[ k ]
+            del self[k]
 
     def iteritems_data(self):
         i = 0
@@ -117,7 +119,7 @@ class RegistryDict(object):
         try:
             while 1:
                 s = win32api.RegEnumKey(self.keyhandle, i)
-                yield s, RegistryDict(self.keyhandle, [ s ], access)
+                yield s, RegistryDict(self.keyhandle, [s], access)
                 i += 1
         except:
             pass
@@ -165,7 +167,7 @@ class RegistryDict(object):
     def __delitem__(self, key):
         # Delete a string value or a subkey, depending on the type
         try:
-            item = self[ key ]
+            item = self[key]
         except:
             return # Silently ignore bad keys
         itemtype = type(item)
@@ -191,7 +193,7 @@ class RegistryDict(object):
     def popitem(self):
         try:
             k, v = self.iteritems().next()
-            del self[ k ]
+            del self[k]
             return k, v
         except StopIteration:
             raise KeyError, "RegistryDict is empty"
@@ -217,8 +219,8 @@ class RegistryDict(object):
         item = str(item)
         pyvalue = type(value)
         if pyvalue is tuple and len(value) == 2:
-            valuetype = value[ 1 ]
-            value = value[ 0 ]
+            valuetype = value[1]
+            value = value[0]
         else:
             if pyvalue is dict or isinstance(value, RegistryDict):
                 d = RegistryDict(self.keyhandle, item)
@@ -265,20 +267,20 @@ if __name__ == '__main__':
     lm = RegistryDict(win32con.HKEY_LOCAL_MACHINE, "Software\TestRegistryDict", flags=None)
 
     print 'should start with empty dict: ', lm
-    lm[ 'test' ] = "abcd"
+    lm['test'] = "abcd"
     print 'should contain test/abcd: ', lm
-    lm[ 'test' ] = "xxxx"
+    lm['test'] = "xxxx"
     print 'should contain test/xxxx: ', lm
-    del lm[ 'test' ]
+    del lm['test']
     print 'should be empty again: ', lm
-    del lm[ 'dummy' ]
+    del lm['dummy']
     print 'should be still empty: ', lm
     print '--- now test int values (REG_DWORD)'
-    lm[ 'test' ] = 1
+    lm['test'] = 1
     print 'should contain: test/1', lm
-    lm[ 'test' ] = 0
+    lm['test'] = 0
     print 'should contain: test/1', lm
-    del lm[ 'test' ]
+    del lm['test']
     print 'should be empty again: ', lm
     ls = RegistryDict(win32con.HKEY_LOCAL_MACHINE, "Software")
-    del ls[ 'TestRegistryDict' ]
+    del ls['TestRegistryDict']

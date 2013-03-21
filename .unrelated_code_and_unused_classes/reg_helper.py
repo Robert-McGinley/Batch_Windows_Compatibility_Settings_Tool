@@ -6,11 +6,11 @@ hive_key_mapping = {"HKLM": winreg.HKEY_LOCAL_MACHINE, "HKCU": winreg.HKEY_CURRE
 def read_sub_keys(hive_key, reg_path):
     if not path_exists(hive_key, reg_path):
         return None
-    # Get the value of a pre-mapped hive key, if that's what we were provided
+        # Get the value of a pre-mapped hive key, if that's what we were provided
     if hive_key in hive_key_mapping.keys():
         reg = winreg.OpenKey(hive_key_mapping[hive_key], reg_path)
     else:
-        reg = winreg.OpenKey(hive_key,reg_path)
+        reg = winreg.OpenKey(hive_key, reg_path)
 
     sub_keys = []
     num_subkeys = winreg.QueryInfoKey(reg)[0]
@@ -32,7 +32,7 @@ def read_values(hive_key, reg_path):
     if hive_key in hive_key_mapping.keys():
         reg = winreg.OpenKey(hive_key_mapping[hive_key], reg_path)
     else:
-        reg = winreg.OpenKey(hive_key,reg_path)
+        reg = winreg.OpenKey(hive_key, reg_path)
 
     values = {}
     num_values = winreg.QueryInfoKey(reg)[1]

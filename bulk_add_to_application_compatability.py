@@ -74,7 +74,7 @@ def print_message(message):
         print("[*] " + str(message))
 
 
-def print_error (message,stderr=True):
+def print_error(message, stderr=True):
     if stderr:
         print("[!] " + message, file=sys.stderr)
     else:
@@ -85,7 +85,7 @@ executable_files = []
 existing_registry_values = {}
 files_to_update = []
 files_to_add = []
-registry_backup_completed = (False,None)
+registry_backup_completed = (False, None)
 values_added = 0
 values_updated = 0
 values_modified_total = 0
@@ -120,7 +120,7 @@ with winreg.ConnectRegistry(registry_host, registry_hive) as open_registry_hive:
     with winreg.OpenKey(open_registry_hive, registry_key, 0, winreg.KEY_ALL_ACCESS) as open_registry_key:
 
         if do_registry_backup:
-            if registry_backup_completed == (True,registry_key):
+            if registry_backup_completed == (True, registry_key):
                 print_error("Registry backup for key \"" + registry_key + "\" has already been completed")
 
             print_message("Backing up registry key to file: " + backup_filename)
@@ -138,7 +138,7 @@ with winreg.ConnectRegistry(registry_host, registry_hive) as open_registry_hive:
                     print_error("Quitting due to failure to back up the registry key before modifying values.")
                     raise
             else:
-                registry_backup_completed = (True,registry_key)
+                registry_backup_completed = (True, registry_key)
                 print_message("Registry key successfully saved to file")
 
         # Retrieve the existing values within the opened key and store them in existing_registry_values dict

@@ -1,4 +1,9 @@
-import win32security, win32file, win32api, ntsecuritycon, win32con, os
+import win32security
+import win32file
+import win32api
+import ntsecuritycon
+import win32con
+import os
 
 
 class windows_security(object):
@@ -22,7 +27,8 @@ class windows_security(object):
             (win32security.LookupPrivilegeValue('', ntsecuritycon.SE_RESTORE_NAME), win32con.SE_PRIVILEGE_ENABLED),
         )
         self.process_handle = win32api.GetCurrentProcess()
-        self.token_handle = win32security.OpenProcessToken(self.process_handle, win32security.TOKEN_ALL_ACCESS | win32con.TOKEN_ADJUST_PRIVILEGES)
+        self.token_handle = win32security.OpenProcessToken(self.process_handle,
+                                                           win32security.TOKEN_ALL_ACCESS | win32con.TOKEN_ADJUST_PRIVILEGES)
 
         self.sids['current_user'] = win32security.GetTokenInformation(self.token_handle, ntsecuritycon.TokenUser)[0]
         self.sids['power_user'] = win32security.LookupAccountName('', 'Power Users')[0]
@@ -30,7 +36,6 @@ class windows_security(object):
         # Todo: Is the group reference for 'everyone', Everyone or EveryOne? Will the lookup work correctly regardless? e.g. case insensitive?
         self.sids['everyone'] = win32security.LookupAccountName('', 'Everyone')[0]
         self.windows_temp_path = win32api.GetTempPath()
-
 
 
     def check_user_account_priv(self, account):
@@ -51,8 +56,6 @@ class windows_security(object):
         :rtype : bool
         """
         authority = self.account_authority_privs
-
-
 
 
 winsec = windows_security()
